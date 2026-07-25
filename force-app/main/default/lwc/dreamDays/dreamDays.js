@@ -61,6 +61,7 @@ export default class DreamDays extends LightningElement {
     isSaving = false;
 
     graphqlRefresh;
+    accordianOpenItems = [];
 
     wiredResult;
     dateFormatter = new Intl.DateTimeFormat(undefined, {
@@ -91,7 +92,8 @@ export default class DreamDays extends LightningElement {
                         title,
                         itemDate,
                         itemDateLabel: this.formatDate(itemDate),
-                        differenceLabel: this.formatDateDifference(itemDate)
+                        differenceYearLabel: this.formatDateDifferenceYear(itemDate),
+                        differenceMonthDayLabel: this.formatDateDifferenceMonthDay(itemDate)
                     };
                 })
                 .sort((a, b) => new Date(a.itemDate) - new Date(b.itemDate));
@@ -226,7 +228,7 @@ export default class DreamDays extends LightningElement {
         return this.dateFormatter.format(dateValue);
     }
 
-    formatDateDifference(value) {
+    formatDateDifferenceYear(value) {
         const targetDate = this.toDateOnly(value);
         if (!targetDate) {
             return 'N/A';
@@ -242,7 +244,28 @@ export default class DreamDays extends LightningElement {
 
         const [start, end] = isPast ? [targetDate, today] : [today, targetDate];
         const diff = this.calendarDiff(start, end);
-        const base = `${diff.years} years, ${diff.months} months, ${diff.days} days`;
+        const base = `${diff.years} years`;
+
+        return base;
+    }
+
+    formatDateDifferenceMonthDay(value) {
+        const targetDate = this.toDateOnly(value);
+        if (!targetDate) {
+            return 'N/A';
+        }
+
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const isPast = targetDate < today;
+
+        if (targetDate.getTime() === today.getTime()) {
+            return '';
+        } 
+
+        const [start, end] = isPast ? [targetDate, today] : [today, targetDate];
+        const diff = this.calendarDiff(start, end);
+        const base = `${diff.months} months, ${diff.days} days`;
 
         return isPast ? `${base} ago` : `In ${base}`;
     }
