@@ -1,0 +1,67 @@
+<template>
+    <lightning-card title="DreamDays" icon-name="standard:event">
+        <div class="slds-p-horizontal_medium slds-p-bottom_small">
+            <div class="form-row">
+                <lightning-input
+                    type="text"
+                    label="Title"
+                    value={newTitle}
+                    onchange={handleTitleChange}
+                ></lightning-input>
+                <lightning-input
+                    type="date"
+                    label="Item Date"
+                    value={newItemDate}
+                    onchange={handleDateChange}
+                ></lightning-input>
+                <lightning-button
+                    variant="brand"
+                    label="Add"
+                    title="Add item"
+                    onclick={handleAdd}
+                    disabled={disableAdd}
+                ></lightning-button>
+            </div>
+        </div>
+
+        <template lwc:if={isLoading}>
+            <div class="slds-is-relative slds-p-around_medium">
+                <lightning-spinner size="small" alternative-text="Loading dream days"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:elseif={error}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium slds-text-color_error">
+                {error}
+            </div>
+        </template>
+
+        <template lwc:elseif={hasItems}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium list-grid">
+                <template for:each={items} for:item="item">
+                    <lightning-card key={item.id} title={item.title} class="item-card">
+                        <div class="slds-p-horizontal_medium slds-p-bottom_medium details">
+                            <p><strong>Item Date:</strong> {item.itemDateLabel}</p>
+                            <p><strong>From Today:</strong> {item.differenceLabel}</p>
+                        </div>
+                        <div slot="footer">
+                            <lightning-button
+                                variant="destructive-text"
+                                label="Remove"
+                                data-id={item.id}
+                                onclick={handleRemove}
+                                disabled={isSaving}
+                            ></lightning-button>
+                        </div>
+                    </lightning-card>
+                </template>
+            </div>
+        </template>
+
+        <template lwc:else>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                Add your first DreamDay item.
+            </div>
+        </template>
+    </lightning-card>
+</template>
