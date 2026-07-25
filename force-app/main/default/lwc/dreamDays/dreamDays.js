@@ -1,6 +1,7 @@
 import { LightningElement, wire } from 'lwc';
 import { gql, graphql, executeMutation } from 'lightning/graphql';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import LightningConfirm from 'lightning/confirm';
 
 // Assumed metadata:
 // - Object API name: DreamDay__c
@@ -180,16 +181,22 @@ export default class DreamDays extends LightningElement {
 
         this.isSaving = true;
         try {
+            const result = await LightningConfirm.open({
+                message: "Are you sure you want to delete this item?",
+                variant: "headerless", // Options: headerless, warning, etc
+                label: "Confirmation Dialog"
+            });
+
+            if (!result) {
+                return;
+            }
+            
             const { data, errors } = await executeMutation({
                 query: DELETE_DREAM_DAY,
                 variables: {
                     id: recordId
                 }
             });
-
-            if (errors?.length) {
-                console.error('Delete errors:', errors);
-            }
 
             await this.handleRefresh();
 

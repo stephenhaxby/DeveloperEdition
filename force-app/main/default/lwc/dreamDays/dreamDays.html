@@ -15,7 +15,7 @@
         <div class="slds-p-horizontal_medium list-grid">
             <template for:each={items} for:item="item">
                 <lightning-card key={item.id} title={item.title} class="item-card">
-                    <div class="slds-p-horizontal_medium details">
+                    <div class="slds-p-horizontal_medium details slds-p-bottom_small">
                         <p><strong>Item Date:</strong> {item.itemDateLabel}</p>
                         <p><strong>From Today:</strong> {item.differenceYearLabel}</p>
                         <p>{item.differenceMonthDayLabel}</p>
