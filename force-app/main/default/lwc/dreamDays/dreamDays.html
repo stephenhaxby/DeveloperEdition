@@ -14,11 +14,23 @@
     <template lwc:elseif={hasItems}>
         <div class="slds-p-horizontal_medium list-grid">
             <template for:each={items} for:item="item">
-                <lightning-card key={item.id} title={item.title} class="item-card">
+                <lightning-card key={item.id}>
+                    <h3 slot="title">
+                        <template lwc:if={item.showAnnouncementIcon}>
+                            <lightning-icon icon-name="action:announcement" size="small" class="slds-m-right_x-small"></lightning-icon>
+                        </template>
+                        <template lwc:elseif={item.showDeferIcon}>
+                            <lightning-icon icon-name="action:defer" size="small" class="slds-m-right_x-small"></lightning-icon>
+                        </template>
+                        {item.title}
+                    </h3>
                     <div class="slds-p-horizontal_medium details slds-p-bottom_small">
                         <p><strong>Item Date:</strong> {item.itemDateLabel}</p>
                         <p><strong>From Today:</strong> {item.differenceYearLabel}</p>
                         <p>{item.differenceMonthDayLabel}</p>
+                        <template lwc:if={item.showDeferIcon}>
+                            <p class="slds-text-color_error"><strong>Days Until:</strong> {item.daysUntil}</p>
+                        </template>
                     </div>
                     <div slot="actions">
                         <lightning-button-icon

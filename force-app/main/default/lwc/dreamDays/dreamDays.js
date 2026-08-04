@@ -88,13 +88,17 @@ export default class DreamDays extends LightningElement {
                     const id = edge.node.Id;
                     const title = edge.node.Name?.value ?? '';
                     const itemDate = edge.node.ItemDate__c?.value;
+                    const daysUntil = this.getDaysUntil(itemDate);
                     return {
                         id,
                         title,
                         itemDate,
                         itemDateLabel: this.formatDate(itemDate),
                         differenceYearLabel: this.formatDateDifferenceYear(itemDate),
-                        differenceMonthDayLabel: this.formatDateDifferenceMonthDay(itemDate)
+                        differenceMonthDayLabel: this.formatDateDifferenceMonthDay(itemDate),
+                        showAnnouncementIcon: daysUntil === 0,
+                        showDeferIcon: daysUntil > 0 && daysUntil <= 7,
+                        daysUntil
                     };
                 })
                 .sort((a, b) => new Date(a.itemDate) - new Date(b.itemDate));
@@ -311,6 +315,28 @@ export default class DreamDays extends LightningElement {
         }
 
         return { years, months, days };
+    }
+
+    getDaysUntil(itemDate) {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        let targetDate = this.toDateOnly(itemDate);
+        targetDate = new Date(now.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+
+        const daysDifference = this.calculateDaysBetween(today, targetDate);
+        
+        console.log(`Days until ${itemDate}: ${daysDifference}`);
+
+        return daysDifference;
+    }
+
+    calculateDaysBetween(startDate, endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const timeDifference = end - start; // Difference in milliseconds
+        const daysDifference = timeDifference / (1000 * 60 * 60 * 24); // Convert to days
+        return Math.round(daysDifference); // Round to nearest whole number
     }
 
     reduceErrors(errors) {
