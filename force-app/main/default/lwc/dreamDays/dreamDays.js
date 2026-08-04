@@ -78,10 +78,10 @@ export default class DreamDays extends LightningElement {
     wiredDreamDays(result) {
         this.wiredResult = result;
         const { data, error, refresh } = result;
-        this.isLoading = false;
         this.graphqlRefresh = refresh;
 
         if (data) {
+            this.isLoading = false;
             const records = data?.uiapi?.query?.DreamDay__c?.edges ?? [];
             this.items = records
                 .map((edge) => {
@@ -107,6 +107,7 @@ export default class DreamDays extends LightningElement {
         }
 
         if (error) {
+            this.isLoading = false;
             this.items = [];
             this.error = this.reduceErrors(error);
         }
