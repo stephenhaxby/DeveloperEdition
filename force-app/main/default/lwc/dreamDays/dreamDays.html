@@ -12,6 +12,9 @@
     </template>
 
     <template lwc:elseif={hasItems}>
+        <div class="slds-p-horizontal_large">
+            <lightning-input type="toggle" label="Sort by Days Until" message-toggle-active="" message-toggle-inactive="" checked={sortByDaysUntil} onchange={handleSortByDaysUntilChange}></lightning-input>
+        </div>
         <div class="slds-p-horizontal_medium list-grid">
             <template for:each={items} for:item="item">
                 <lightning-card key={item.id}>
@@ -30,6 +33,9 @@
                         <p>{item.differenceMonthDayLabel}</p>
                         <template lwc:if={item.showDeferIcon}>
                             <p class="slds-text-color_error"><strong>Days Until:</strong> {item.daysUntil}</p>
+                        </template>
+                        <template lwc:else>
+                            <p><strong>Days Until:</strong> {item.daysUntil}</p>
                         </template>
                     </div>
                     <div slot="actions">

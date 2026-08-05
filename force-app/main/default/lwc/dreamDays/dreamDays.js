@@ -56,6 +56,7 @@ export default class DreamDays extends LightningElement {
     items = [];
     error;
     isLoading = true;
+    sortByDaysUntil = false;
 
     newTitle = '';
     newItemDate;
@@ -88,7 +89,12 @@ export default class DreamDays extends LightningElement {
                     const id = edge.node.Id;
                     const title = edge.node.Name?.value ?? '';
                     const itemDate = edge.node.ItemDate__c?.value;
-                    const daysUntil = this.getDaysUntil(itemDate);
+                    let daysUntil = this.getDaysUntil(itemDate);
+
+                    if (daysUntil < 0) {
+                        daysUntil += 365;
+                    }
+
                     return {
                         id,
                         title,
@@ -100,8 +106,10 @@ export default class DreamDays extends LightningElement {
                         showDeferIcon: daysUntil > 0 && daysUntil <= 7,
                         daysUntil
                     };
-                })
-                .sort((a, b) => new Date(a.itemDate) - new Date(b.itemDate));
+                });
+            
+            this.sortItems();
+
             this.error = undefined;
             return;
         }
@@ -327,8 +335,6 @@ export default class DreamDays extends LightningElement {
 
         const daysDifference = this.calculateDaysBetween(today, targetDate);
         
-        console.log(`Days until ${itemDate}: ${daysDifference}`);
-
         return daysDifference;
     }
 
@@ -360,5 +366,18 @@ export default class DreamDays extends LightningElement {
                 return 'Unknown error';
             })
             .join('; ');
+    }
+
+    handleSortByDaysUntilChange(event) {
+        this.sortByDaysUntil = event.target.checked;
+        this.sortItems();
+    }
+
+    sortItems() {
+        if (this.sortByDaysUntil) {
+            this.items.sort((a, b) => a.daysUntil - b.daysUntil);
+        } else {
+            this.items.sort((a, b) => new Date(a.itemDate) - new Date(b.itemDate));
+        }
     }
 }
