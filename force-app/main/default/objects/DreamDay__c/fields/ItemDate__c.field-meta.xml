@@ -3,5 +3,6 @@
     <fullName>ItemDate__c</fullName>
     <label>Item Date</label>
     <required>true</required>
+    <trackTrending>false</trackTrending>
     <type>Date</type>
 </CustomField>
