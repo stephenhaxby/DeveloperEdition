@@ -56,7 +56,7 @@ export default class DreamDays extends LightningElement {
     items = [];
     error;
     isLoading = true;
-    sortByDaysUntil = false;
+    sortByDaysUntil = true;
 
     newTitle = '';
     newItemDate;

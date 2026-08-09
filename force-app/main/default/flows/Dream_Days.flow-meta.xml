@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
-        <name>Send_Notification</name>
+        <name>Send_MonthAndDayPlusIntervalAreEqual_Notification</name>
         <label>Send Notification</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
@@ -34,8 +34,56 @@
         <inputParameters>
             <name>body</name>
             <value>
-                <elementReference>Loop_Dream_Days.Name</elementReference>
                 <inputConfiguratorMode>Resource</inputConfiguratorMode>
+                <stringValue>{!Loop_Dream_Days.Name} is coming up in 7 days...</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>targetPageRef</name>
+            <value>
+                <elementReference>NotificationPageName</elementReference>
+                <inputConfiguratorMode>Resource</inputConfiguratorMode>
+            </value>
+        </inputParameters>
+        <nameSegment>customNotificationAction</nameSegment>
+        <offset>0</offset>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_MonthDayAreEqual_Notification</name>
+        <label>Send Notification</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>customNotificationAction</actionName>
+        <actionType>customNotificationAction</actionType>
+        <connector>
+            <targetReference>Loop_Dream_Days</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>customNotifTypeId</name>
+            <value>
+                <elementReference>GetNotification.Id</elementReference>
+                <inputConfiguratorMode>Resource</inputConfiguratorMode>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>recipientIds</name>
+            <value>
+                <elementReference>DreamDayOwnerIds</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>title</name>
+            <value>
+                <inputConfiguratorMode>Custom</inputConfiguratorMode>
+                <stringValue>Dream Days</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>body</name>
+            <value>
+                <inputConfiguratorMode>Resource</inputConfiguratorMode>
+                <stringValue>{!Loop_Dream_Days.Name} is today!</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -63,7 +111,7 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Send_Notification</targetReference>
+            <targetReference>IfMonthDayAreEqual</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -73,7 +121,7 @@
         <locationY>0</locationY>
         <assignmentItems>
             <assignToReference>DreamDayOwnerIds</assignToReference>
-            <operator>RemoveAll</operator>
+            <operator>Assign</operator>
         </assignmentItems>
         <connector>
             <targetReference>Assignment_1</targetReference>
@@ -94,8 +142,8 @@
         </value>
     </constants>
     <decisions>
-        <name>IfMonthDayAreEqual</name>
-        <label>IF MonthDayAreEqual</label>
+        <name>IF_MonthAndDayPlusIntervalAreEqual</name>
+        <label>IF MonthAndDayPlusIntervalAreEqual</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
         <defaultConnector>
@@ -103,15 +151,8 @@
         </defaultConnector>
         <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
         <rules>
-            <name>Outcome_Of_IfMonthDayAreEqual</name>
-            <conditionLogic>or</conditionLogic>
-            <conditions>
-                <leftValueReference>MonthDayAreEqual</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
+            <name>Outcome_1_of_Decision_2</name>
+            <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>MonthAndDayPlusIntervalAreEqual</leftValueReference>
                 <operator>EqualTo</operator>
@@ -120,7 +161,32 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>GetNotification</targetReference>
+                <targetReference>Send_MonthAndDayPlusIntervalAreEqual_Notification</targetReference>
+            </connector>
+            <label>Outcome 1 of Decision 2</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>IfMonthDayAreEqual</name>
+        <label>IF MonthDayAreEqual</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>IF_MonthAndDayPlusIntervalAreEqual</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Outcome_Of_IfMonthDayAreEqual</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>MonthDayAreEqual</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_MonthDayAreEqual_Notification</targetReference>
             </connector>
             <label>IF MonthDayAreEqual</label>
         </rules>
@@ -157,7 +223,7 @@
         <collectionReference>Get_Dream_Days_Coming_Up</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
-            <targetReference>IfMonthDayAreEqual</targetReference>
+            <targetReference>Assignment_2</targetReference>
         </nextValueConnector>
     </loops>
     <processMetadataValues>
@@ -186,7 +252,7 @@
         <locationY>0</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Loop_Dream_Days</targetReference>
+            <targetReference>GetNotification</targetReference>
         </connector>
         <getFirstRecordOnly>false</getFirstRecordOnly>
         <object>DreamDay__c</object>
@@ -199,7 +265,7 @@
         <locationY>0</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Assignment_2</targetReference>
+            <targetReference>Loop_Dream_Days</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -228,7 +294,7 @@
         </schedule>
         <triggerType>Scheduled</triggerType>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
     <variables>
         <name>DreamDayOwnerIds</name>
         <dataType>String</dataType>
