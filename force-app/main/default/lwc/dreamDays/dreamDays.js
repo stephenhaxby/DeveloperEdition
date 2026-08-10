@@ -28,6 +28,9 @@ const DREAM_DAYS_QUERY = gql`
     }
 `;
 
+// DreamDay__cCreate mutation to create a new DreamDay__c record with the provided 
+// title and itemDate.
+// The word "Create" after the object name is required to indicate that this is a create operation.
 const CREATE_DREAM_DAY = gql`
     mutation CreateDreamDay($title: String!, $itemDate: Date!) {
         uiapi {
@@ -42,6 +45,9 @@ const CREATE_DREAM_DAY = gql`
     }
 `;
 
+// DreamDay__cCreate mutation to create a new DreamDay__c record with the provided 
+// title and itemDate.
+// The word "Delete" after the object name is required to indicate that this is a delete operation.
 const DELETE_DREAM_DAY = gql`
     mutation DeleteDreamDay($id: IdOrRef!) {
         uiapi {
